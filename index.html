@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kokina Bloom | Living Nature</title>
+    <title>Kokina Çiçeği | Yaşayan Doğa</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,10 +42,10 @@
             width: 100%;
             height: 100vh;
             z-index: -1;
-            pointer-events: auto; /* Allow orbit controls if needed, usually passed through */
+            pointer-events: auto;
         }
 
-        /* --- UI ELEMENTS --- */
+        /* --- ARAYÜZ ELEMANLARI --- */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -67,7 +67,7 @@
             animation: pulse 2s infinite;
         }
 
-        /* --- SECTIONS --- */
+        /* --- BÖLÜMLER --- */
         section {
             min-height: 100vh;
             position: relative;
@@ -75,7 +75,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            pointer-events: none; /* Let clicks pass to canvas where typically needed */
+            pointer-events: none;
         }
 
         .hero-section {
@@ -129,7 +129,7 @@
             background: linear-gradient(to bottom, var(--c-light), transparent);
         }
 
-        /* --- CONTENT CARDS --- */
+        /* --- İÇERİK KARTLARI --- */
         .content-section {
             align-items: flex-end;
             text-align: right;
@@ -157,7 +157,7 @@
             font-family: var(--font-serif);
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: #d84b55; /* Muted crimson */
+            color: #d84b55; /* Soluk kızıl */
         }
 
         .info-card p {
@@ -192,7 +192,7 @@
             margin-bottom: 1rem;
         }
 
-        /* --- CONTROLS --- */
+        /* --- KONTROLLER --- */
         .audio-toggle {
             position: fixed;
             bottom: 2rem;
@@ -216,7 +216,7 @@
             border-color: rgba(255,255,255,0.6);
         }
 
-        /* --- ANIMATIONS --- */
+        /* --- ANİMASYONLAR --- */
         @keyframes pulse {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
@@ -231,20 +231,20 @@
     </audio>
 
     <div class="loading-screen" id="loader">
-        <div class="loader-text">GERMINATING...</div>
+        <div class="loader-text">FİLİZLENİYOR...</div>
     </div>
 
     <div id="canvas-container"></div>
 
-    <button class="audio-toggle" id="audio-btn">ENABLE SOUND</button>
+    <button class="audio-toggle" id="audio-btn">SESİ AÇ</button>
 
     <section class="hero-section">
         <div class="hero-content">
-            <h1 id="hero-title">Kokina Bloom</h1>
-            <p class="subtitle" id="hero-sub">A SYMBOL OF LUCK AND ETERNAL HOPE</p>
+            <h1 id="hero-title">Kokina</h1>
+            <p class="subtitle" id="hero-sub">ŞANSIN VE SONSUZ UMUDUN SİMGESİ</p>
         </div>
         <div class="scroll-indicator" id="scroll-ind">
-            <span>SCROLL</span>
+            <span>KAYDIR</span>
             <div class="scroll-line"></div>
         </div>
     </section>
@@ -253,24 +253,24 @@
         <div class="info-card">
             <h2>Ruscus Aculeatus</h2>
             <p>
-                Known popularly as "Kokina," this botanical marvel is actually a combination of two plants. The sharp, evergreen leaves of the Butcher's Broom are hand-tied with vibrant red berries to create a symbol of new year prosperity.
+                Halk arasında "Kokina" olarak bilinen bu botanik harikası, aslında insan eliyle birleştirilen iki farklı bitkidir. "Tavşan Memesi" bitkisinin sert yaprakları, parlak kırmızı meyvelerle özenle bağlanarak yeni yıl bereketinin bir sembolü haline getirilir.
             </p>
-            <span class="botanical-detail">Family: Asparagaceae &nbsp;|&nbsp; Origin: Mediterranean</span>
+            <span class="botanical-detail">Familya: Kuşkonmazgiller &nbsp;|&nbsp; Köken: Akdeniz</span>
         </div>
     </section>
 
     <section class="content-section" style="align-items: flex-start; text-align: left;">
         <div class="info-card">
-            <h2>The Myth</h2>
+            <h2>Efsane</h2>
             <p>
-                Legend says if you keep your Kokina fresh and red for an entire year, you will become a homeowner. It is a test of patience, care, and the enduring power of nature.
+                İnanışa göre, eğer Kokina çiçeğinizi rengi bozulmadan ve çürümeden bir sonraki yıla kadar saklayabilirseniz, ev sahibi olursunuz. Bu; sabrın, özenin ve doğanın kalıcı gücünün zarif bir sınavıdır.
             </p>
         </div>
     </section>
 
     <footer>
         <div class="footer-logo">KOKINA</div>
-        <p style="font-size: 0.8rem; opacity: 0.5;">© 2024 Botanical Art Experience</p>
+        <p style="font-size: 0.8rem; opacity: 0.5;">© 2024 Botanik Sanat Deneyimi</p>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -284,7 +284,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // --- 1. CONFIGURATION & STATE ---
+        // --- 1. AYARLAR & DURUM ---
         const config = {
             colorBg: 0x050a07,
             colorLeaf: 0x1a3d24,
@@ -300,16 +300,16 @@
         let mouse = new THREE.Vector2();
         let targetRotation = { x: 0, y: 0 };
         
-        // --- 2. SETUP SCENE ---
+        // --- 2. SAHNE KURULUMU ---
         function init() {
             const container = document.getElementById('canvas-container');
 
-            // Scene
+            // Sahne
             scene = new THREE.Scene();
             scene.background = new THREE.Color(config.colorBg);
-            scene.fog = new THREE.FogExp2(config.colorBg, 0.02); // Atmospheric depth
+            scene.fog = new THREE.FogExp2(config.colorBg, 0.02); // Atmosferik derinlik
 
-            // Camera
+            // Kamera
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
             camera.position.set(0, 0, 15);
 
@@ -322,7 +322,7 @@
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
-            // Lighting
+            // Işıklandırma
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
             scene.add(ambientLight);
 
@@ -340,7 +340,7 @@
             berryLight.position.set(0, 0, 2);
             scene.add(berryLight);
 
-            // Post Processing (Bloom)
+            // Post Processing (Bloom Efekti)
             const renderScene = new THREE.RenderPass(scene, camera);
             const bloomPass = new THREE.UnrealBloomPass(
                 new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -353,28 +353,28 @@
             composer.addPass(renderScene);
             composer.addPass(bloomPass);
 
-            // Build Objects
+            // Objeleri Oluştur
             createFlower();
             createParticles();
 
-            // Listeners
+            // Dinleyiciler
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('mousemove', onMouseMove, false);
             
-            // Start Loop
+            // Döngüyü Başlat
             animate();
             
-            // Intro Animation
+            // Giriş Animasyonu
             revealSite();
         }
 
-        // --- 3. PROCEDURAL FLOWER GENERATION ---
+        // --- 3. PROSEDÜREL ÇİÇEK OLUŞTURMA ---
         function createFlower() {
             flowerGroup = new THREE.Group();
             berryGroup = new THREE.Group();
             leafGroup = new THREE.Group();
 
-            // Materials
+            // Materyaller
             const berryMaterial = new THREE.MeshPhysicalMaterial({
                 color: config.colorBerry,
                 roughness: 0.1,
@@ -393,14 +393,12 @@
                 flatShading: false
             });
 
-            // 1. Create Berries (The Center)
-            // A cluster of spheres
+            // 1. Meyveler (Merkez)
             const berryGeo = new THREE.SphereGeometry(0.3, 32, 32);
             const berryCount = 12;
             
             for(let i=0; i<berryCount; i++) {
                 const mesh = new THREE.Mesh(berryGeo, berryMaterial);
-                // Distribute in a small sphere cluster
                 const phi = Math.acos(-1 + (2 * i) / berryCount);
                 const theta = Math.sqrt(berryCount * Math.PI) * phi;
                 
@@ -411,12 +409,8 @@
             }
             flowerGroup.add(berryGroup);
 
-            // 2. Create Leaves (The Blooming Part)
-            // Using stretched spheres or cones flattened to look like ruscus leaves
-            // Ruscus leaves are stiff, pointy, lanceolate.
-            
+            // 2. Yapraklar (Çevreleyen Kısım)
             const leafGeo = new THREE.SphereGeometry(1, 32, 32);
-            // Deform geometry to look like a leaf
             leafGeo.scale(0.3, 1.5, 0.05); 
             
             const layers = 3;
@@ -428,25 +422,23 @@
                     leaf.castShadow = true;
                     leaf.receiveShadow = true;
 
-                    const angle = (i / leavesPerLayer) * Math.PI * 2 + (l * 0.5); // Offset layers
+                    const angle = (i / leavesPerLayer) * Math.PI * 2 + (l * 0.5);
                     const radius = 0.5 + (l * 0.2);
                     
-                    // Position
                     leaf.position.x = Math.cos(angle) * radius;
                     leaf.position.z = Math.sin(angle) * radius;
                     leaf.position.y = -0.5 - (l*0.3);
 
-                    // Initial Rotation (Closed state)
-                    // We will animate this to "Open" state
+                    // Başlangıç Rotasyonu (Kapalı durum)
                     leaf.rotation.y = -angle;
-                    leaf.rotation.x = -Math.PI / 4; // Start angled up/in
+                    leaf.rotation.x = -Math.PI / 4; 
                     leaf.rotation.z = Math.PI / 2;
 
-                    // Custom property for animation references
+                    // Animasyon verileri
                     leaf.userData = {
                         originalRotX: leaf.rotation.x,
                         originalRotZ: leaf.rotation.z,
-                        openRotX: (Math.PI / 2.5) + (l * 0.2), // The angle it blooms to
+                        openRotX: (Math.PI / 2.5) + (l * 0.2), 
                         layerIndex: l,
                         angleIndex: i
                     };
@@ -458,7 +450,7 @@
             scene.add(flowerGroup);
         }
 
-        // --- 4. PARTICLES (POLLEN/ATMOSPHERE) ---
+        // --- 4. PARÇACIKLAR (TOZ/ATMOSFER) ---
         function createParticles() {
             const particleCount = 200;
             const geometry = new THREE.BufferGeometry();
@@ -468,7 +460,7 @@
             for (let i = 0; i < particleCount; i++) {
                 positions[i * 3] = (Math.random() - 0.5) * 20;
                 positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 10 + 5; // Keep close to camera
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 10 + 5; 
                 sizes[i] = Math.random() * 2;
             }
 
@@ -487,30 +479,27 @@
             scene.add(particlesMesh);
         }
 
-        // --- 5. ANIMATION LOGIC ---
+        // --- 5. ANİMASYON MANTIĞI ---
         function animate() {
             requestAnimationFrame(animate);
 
             const time = performance.now() * 0.001;
 
-            // Idle Flower Motion (Breathing & Floating)
+            // Boşta Salınım
             flowerGroup.position.y = Math.sin(time * 0.5) * 0.2;
             flowerGroup.rotation.y += 0.002;
 
-            // Mouse Parallax with Smoothing
+            // Fare Paralaks Etkisi
             targetRotation.x = mouse.y * 0.5;
             targetRotation.y = mouse.x * 0.5;
             
-            // Lerp camera or group for smooth follow
             flowerGroup.rotation.x += (targetRotation.x - flowerGroup.rotation.x) * 0.05;
             flowerGroup.rotation.z += (-targetRotation.y - flowerGroup.rotation.z) * 0.05;
 
-            // Particle Movement
+            // Parçacık Hareketi
             const positions = particlesMesh.geometry.attributes.position.array;
             for(let i=0; i<200; i++) {
-                // Subtle rise
                 positions[i*3 + 1] += 0.005; 
-                // Reset if too high
                 if(positions[i*3 + 1] > 10) positions[i*3 + 1] = -10;
             }
             particlesMesh.geometry.attributes.position.needsUpdate = true;
@@ -520,7 +509,6 @@
         }
 
         function onMouseMove(event) {
-            // Normalize mouse coordinates -1 to 1
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         }
@@ -532,28 +520,27 @@
             composer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // --- 6. GSAP ANIMATIONS & SEQUENCING ---
+        // --- 6. GSAP ANİMASYONLARI ---
         function revealSite() {
             const tl = gsap.timeline();
 
-            // 1. Remove Loader
+            // 1. Yükleniyor Ekranını Kaldır
             tl.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
                 document.getElementById('loader').style.display = 'none';
             }})
             
-            // 2. Bloom Animation (Unfolding the leaves)
+            // 2. Çiçek Açma Animasyonu
             .add(() => {
                 leafGroup.children.forEach((leaf, i) => {
-                    // Staggered opening based on layer
                     gsap.to(leaf.rotation, {
-                        x: leaf.userData.openRotX, // Open outward
+                        x: leaf.userData.openRotX, 
                         duration: 3,
                         ease: "power2.inOut",
-                        delay: leaf.userData.layerIndex * 0.5 // Outer layers first or last
+                        delay: leaf.userData.layerIndex * 0.5 
                     });
                 });
                 
-                // Pop the berries
+                // Meyvelerin Belirmesi
                 gsap.from(berryGroup.scale, {
                     x: 0, y: 0, z: 0,
                     duration: 2.5,
@@ -561,7 +548,7 @@
                 });
             })
 
-            // 3. UI Reveal
+            // 3. Yazıların Gelişi
             .to("#hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=2")
             .to("#hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1.2")
             .to("#scroll-ind", { opacity: 1, duration: 1 }, "-=1");
@@ -572,10 +559,10 @@
         function setupScrollTriggers() {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Move flower to side and rotate on scroll
+            // Scroll ile çiçeği kaydır
             gsap.to(flowerGroup.position, {
-                x: -3, // Move left
-                z: -5, // Move back
+                x: -3, // Sola kaydır
+                z: -5, // Geriye at
                 scrollTrigger: {
                     trigger: "body",
                     start: "top top",
@@ -594,7 +581,7 @@
                 }
             });
 
-            // Reveal Info Cards
+            // Bilgi Kartlarını Göster
             gsap.utils.toArray('.info-card').forEach(card => {
                 gsap.to(card, {
                     opacity: 1,
@@ -609,7 +596,7 @@
             });
         }
 
-        // --- 7. AUDIO HANDLING ---
+        // --- 7. SES YÖNETİMİ ---
         const audioBtn = document.getElementById('audio-btn');
         const audio = document.getElementById('ambient-audio');
         let isPlaying = false;
@@ -617,24 +604,24 @@
         audioBtn.addEventListener('click', () => {
             if(!isPlaying) {
                 audio.play().then(() => {
-                    audioBtn.textContent = "MUTE SOUND";
+                    audioBtn.textContent = "SESİ KAPAT";
                     audioBtn.style.opacity = 0.5;
                     isPlaying = true;
-                    // Fade in volume
+                    // Sesi yavaşça aç
                     audio.volume = 0;
                     gsap.to(audio, { volume: 0.5, duration: 2 });
                 });
             } else {
                 gsap.to(audio, { volume: 0, duration: 1, onComplete: () => {
                     audio.pause();
-                    audioBtn.textContent = "ENABLE SOUND";
+                    audioBtn.textContent = "SESİ AÇ";
                     audioBtn.style.opacity = 1;
                     isPlaying = false;
                 }});
             }
         });
 
-        // Initialize
+        // Başlat
         init();
 
     </script>
