@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kokina Bloom | Living Nature</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --c-dark: #050a07;
+            --c-green: #0f2b1d;
+            --c-crimson: #a61c28;
+            --c-gold: #d4af37;
+            --c-light: #e8e8e8;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--c-dark);
+            color: var(--c-light);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* --- CANVAS --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: auto; /* Allow orbit controls if needed, usually passed through */
+        }
+
+        /* --- UI ELEMENTS --- */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--c-dark);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        .loader-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            min-height: 100vh;
+            position: relative;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            pointer-events: none; /* Let clicks pass to canvas where typically needed */
+        }
+
+        .hero-section {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(4rem, 8vw, 8rem);
+            font-weight: 300;
+            line-height: 0.9;
+            color: var(--c-light);
+            mix-blend-mode: overlay;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--c-light), transparent);
+        }
+
+        /* --- CONTENT CARDS --- */
+        .content-section {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .info-card {
+            background: rgba(15, 43, 29, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem;
+            max-width: 500px;
+            border-radius: 4px;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(50px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .info-card h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #d84b55; /* Muted crimson */
+        }
+
+        .info-card p {
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        .botanical-detail {
+            font-family: var(--font-serif);
+            font-style: italic;
+            margin-top: 1rem;
+            display: block;
+            font-size: 0.9rem;
+            color: var(--c-gold);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            height: 30vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            pointer-events: auto;
+            background: linear-gradient(to top, #000, transparent);
+        }
+
+        .footer-logo {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- CONTROLS --- */
+        .audio-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .audio-toggle:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <audio id="ambient-audio" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="loading-screen" id="loader">
+        <div class="loader-text">GERMINATING...</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <button class="audio-toggle" id="audio-btn">ENABLE SOUND</button>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 id="hero-title">Kokina Bloom</h1>
+            <p class="subtitle" id="hero-sub">A SYMBOL OF LUCK AND ETERNAL HOPE</p>
+        </div>
+        <div class="scroll-indicator" id="scroll-ind">
+            <span>SCROLL</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section class="content-section" id="details-section">
+        <div class="info-card">
+            <h2>Ruscus Aculeatus</h2>
+            <p>
+                Known popularly as "Kokina," this botanical marvel is actually a combination of two plants. The sharp, evergreen leaves of the Butcher's Broom are hand-tied with vibrant red berries to create a symbol of new year prosperity.
+            </p>
+            <span class="botanical-detail">Family: Asparagaceae &nbsp;|&nbsp; Origin: Mediterranean</span>
+        </div>
+    </section>
+
+    <section class="content-section" style="align-items: flex-start; text-align: left;">
+        <div class="info-card">
+            <h2>The Myth</h2>
+            <p>
+                Legend says if you keep your Kokina fresh and red for an entire year, you will become a homeowner. It is a test of patience, care, and the enduring power of nature.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">KOKINA</div>
+        <p style="font-size: 0.8rem; opacity: 0.5;">© 2024 Botanical Art Experience</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // --- 1. CONFIGURATION & STATE ---
+        const config = {
+            colorBg: 0x050a07,
+            colorLeaf: 0x1a3d24,
+            colorBerry: 0xcc1020,
+            bloomStrength: 1.5,
+            bloomRadius: 0.5,
+            bloomThreshold: 0.2
+        };
+
+        let scene, camera, renderer, composer;
+        let flowerGroup, berryGroup, leafGroup;
+        let particlesMesh;
+        let mouse = new THREE.Vector2();
+        let targetRotation = { x: 0, y: 0 };
+        
+        // --- 2. SETUP SCENE ---
+        function init() {
+            const container = document.getElementById('canvas-container');
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(config.colorBg);
+            scene.fog = new THREE.FogExp2(config.colorBg, 0.02); // Atmospheric depth
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, 15);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ReinhardToneMapping;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const spotLight = new THREE.SpotLight(0xffeeb1, 2);
+            spotLight.position.set(10, 20, 10);
+            spotLight.castShadow = true;
+            spotLight.shadow.bias = -0.0001;
+            scene.add(spotLight);
+
+            const rimLight = new THREE.PointLight(0x4455ff, 1);
+            rimLight.position.set(-10, 5, -10);
+            scene.add(rimLight);
+
+            const berryLight = new THREE.PointLight(0xff0000, 0.8, 10);
+            berryLight.position.set(0, 0, 2);
+            scene.add(berryLight);
+
+            // Post Processing (Bloom)
+            const renderScene = new THREE.RenderPass(scene, camera);
+            const bloomPass = new THREE.UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                config.bloomStrength,
+                config.bloomRadius,
+                config.bloomThreshold
+            );
+
+            composer = new THREE.EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            // Build Objects
+            createFlower();
+            createParticles();
+
+            // Listeners
+            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('mousemove', onMouseMove, false);
+            
+            // Start Loop
+            animate();
+            
+            // Intro Animation
+            revealSite();
+        }
+
+        // --- 3. PROCEDURAL FLOWER GENERATION ---
+        function createFlower() {
+            flowerGroup = new THREE.Group();
+            berryGroup = new THREE.Group();
+            leafGroup = new THREE.Group();
+
+            // Materials
+            const berryMaterial = new THREE.MeshPhysicalMaterial({
+                color: config.colorBerry,
+                roughness: 0.1,
+                metalness: 0.1,
+                clearcoat: 0.8,
+                clearcoatRoughness: 0.1,
+                emissive: 0x330000,
+                emissiveIntensity: 0.2
+            });
+
+            const leafMaterial = new THREE.MeshPhysicalMaterial({
+                color: config.colorLeaf,
+                roughness: 0.6,
+                metalness: 0.0,
+                side: THREE.DoubleSide,
+                flatShading: false
+            });
+
+            // 1. Create Berries (The Center)
+            // A cluster of spheres
+            const berryGeo = new THREE.SphereGeometry(0.3, 32, 32);
+            const berryCount = 12;
+            
+            for(let i=0; i<berryCount; i++) {
+                const mesh = new THREE.Mesh(berryGeo, berryMaterial);
+                // Distribute in a small sphere cluster
+                const phi = Math.acos(-1 + (2 * i) / berryCount);
+                const theta = Math.sqrt(berryCount * Math.PI) * phi;
+                
+                mesh.position.setFromSphericalCoords(0.6 + Math.random()*0.2, phi, theta);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                berryGroup.add(mesh);
+            }
+            flowerGroup.add(berryGroup);
+
+            // 2. Create Leaves (The Blooming Part)
+            // Using stretched spheres or cones flattened to look like ruscus leaves
+            // Ruscus leaves are stiff, pointy, lanceolate.
+            
+            const leafGeo = new THREE.SphereGeometry(1, 32, 32);
+            // Deform geometry to look like a leaf
+            leafGeo.scale(0.3, 1.5, 0.05); 
+            
+            const layers = 3;
+            const leavesPerLayer = 7;
+
+            for(let l=0; l<layers; l++) {
+                for(let i=0; i<leavesPerLayer; i++) {
+                    const leaf = new THREE.Mesh(leafGeo, leafMaterial);
+                    leaf.castShadow = true;
+                    leaf.receiveShadow = true;
+
+                    const angle = (i / leavesPerLayer) * Math.PI * 2 + (l * 0.5); // Offset layers
+                    const radius = 0.5 + (l * 0.2);
+                    
+                    // Position
+                    leaf.position.x = Math.cos(angle) * radius;
+                    leaf.position.z = Math.sin(angle) * radius;
+                    leaf.position.y = -0.5 - (l*0.3);
+
+                    // Initial Rotation (Closed state)
+                    // We will animate this to "Open" state
+                    leaf.rotation.y = -angle;
+                    leaf.rotation.x = -Math.PI / 4; // Start angled up/in
+                    leaf.rotation.z = Math.PI / 2;
+
+                    // Custom property for animation references
+                    leaf.userData = {
+                        originalRotX: leaf.rotation.x,
+                        originalRotZ: leaf.rotation.z,
+                        openRotX: (Math.PI / 2.5) + (l * 0.2), // The angle it blooms to
+                        layerIndex: l,
+                        angleIndex: i
+                    };
+                    
+                    leafGroup.add(leaf);
+                }
+            }
+            flowerGroup.add(leafGroup);
+            scene.add(flowerGroup);
+        }
+
+        // --- 4. PARTICLES (POLLEN/ATMOSPHERE) ---
+        function createParticles() {
+            const particleCount = 200;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 10 + 5; // Keep close to camera
+                sizes[i] = Math.random() * 2;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const material = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.05,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+
+            particlesMesh = new THREE.Points(geometry, material);
+            scene.add(particlesMesh);
+        }
+
+        // --- 5. ANIMATION LOGIC ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = performance.now() * 0.001;
+
+            // Idle Flower Motion (Breathing & Floating)
+            flowerGroup.position.y = Math.sin(time * 0.5) * 0.2;
+            flowerGroup.rotation.y += 0.002;
+
+            // Mouse Parallax with Smoothing
+            targetRotation.x = mouse.y * 0.5;
+            targetRotation.y = mouse.x * 0.5;
+            
+            // Lerp camera or group for smooth follow
+            flowerGroup.rotation.x += (targetRotation.x - flowerGroup.rotation.x) * 0.05;
+            flowerGroup.rotation.z += (-targetRotation.y - flowerGroup.rotation.z) * 0.05;
+
+            // Particle Movement
+            const positions = particlesMesh.geometry.attributes.position.array;
+            for(let i=0; i<200; i++) {
+                // Subtle rise
+                positions[i*3 + 1] += 0.005; 
+                // Reset if too high
+                if(positions[i*3 + 1] > 10) positions[i*3 + 1] = -10;
+            }
+            particlesMesh.geometry.attributes.position.needsUpdate = true;
+            particlesMesh.rotation.y = -mouse.x * 0.1;
+
+            composer.render();
+        }
+
+        function onMouseMove(event) {
+            // Normalize mouse coordinates -1 to 1
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- 6. GSAP ANIMATIONS & SEQUENCING ---
+        function revealSite() {
+            const tl = gsap.timeline();
+
+            // 1. Remove Loader
+            tl.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
+                document.getElementById('loader').style.display = 'none';
+            }})
+            
+            // 2. Bloom Animation (Unfolding the leaves)
+            .add(() => {
+                leafGroup.children.forEach((leaf, i) => {
+                    // Staggered opening based on layer
+                    gsap.to(leaf.rotation, {
+                        x: leaf.userData.openRotX, // Open outward
+                        duration: 3,
+                        ease: "power2.inOut",
+                        delay: leaf.userData.layerIndex * 0.5 // Outer layers first or last
+                    });
+                });
+                
+                // Pop the berries
+                gsap.from(berryGroup.scale, {
+                    x: 0, y: 0, z: 0,
+                    duration: 2.5,
+                    ease: "elastic.out(1, 0.5)"
+                });
+            })
+
+            // 3. UI Reveal
+            .to("#hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=2")
+            .to("#hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1.2")
+            .to("#scroll-ind", { opacity: 1, duration: 1 }, "-=1");
+
+            setupScrollTriggers();
+        }
+
+        function setupScrollTriggers() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Move flower to side and rotate on scroll
+            gsap.to(flowerGroup.position, {
+                x: -3, // Move left
+                z: -5, // Move back
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 2
+                }
+            });
+
+            gsap.to(flowerGroup.rotation, {
+                y: Math.PI * 2,
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 2
+                }
+            });
+
+            // Reveal Info Cards
+            gsap.utils.toArray('.info-card').forEach(card => {
+                gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+        }
+
+        // --- 7. AUDIO HANDLING ---
+        const audioBtn = document.getElementById('audio-btn');
+        const audio = document.getElementById('ambient-audio');
+        let isPlaying = false;
+
+        audioBtn.addEventListener('click', () => {
+            if(!isPlaying) {
+                audio.play().then(() => {
+                    audioBtn.textContent = "MUTE SOUND";
+                    audioBtn.style.opacity = 0.5;
+                    isPlaying = true;
+                    // Fade in volume
+                    audio.volume = 0;
+                    gsap.to(audio, { volume: 0.5, duration: 2 });
+                });
+            } else {
+                gsap.to(audio, { volume: 0, duration: 1, onComplete: () => {
+                    audio.pause();
+                    audioBtn.textContent = "ENABLE SOUND";
+                    audioBtn.style.opacity = 1;
+                    isPlaying = false;
+                }});
+            }
+        });
+
+        // Initialize
+        init();
+
+    </script>
+</body>
+</html>
